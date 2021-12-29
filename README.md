@@ -9,6 +9,7 @@ echange de message en utilisant Aes
 python3 client1.py (attendre que le message Server is listening puis lancer)
 ```
 ```
-python3 client2.py 
-```
+python3 client2.py  
+
 (quand le message You can chat now apparait vous pouvez discuter)
+```
