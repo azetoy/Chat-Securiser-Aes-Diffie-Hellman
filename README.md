@@ -5,6 +5,10 @@ Chat securiser en utilisant Diffie-Hellman pour la generation des clé et le cry
 echange de message en utilisant Aes 
 
 # Pour Executer
+```
 python3 client1.py (attendre que le message Server is listening puis lancer)
+```
+```
 python3 client2.py 
+```
 (quand le message You can chat now apparait vous pouvez discuter)
