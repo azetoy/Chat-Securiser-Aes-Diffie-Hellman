@@ -1,3 +1,8 @@
+# Credit 
+```
+Merci a https://github.com/DinahWorld pour son aide a l'implementation de Diffie Hellman
+```
+
 # Chat-Securiser-Aes-Diffie-Hellman
 chat securiser utilisant Diffie-Hellman et le chiffre Aes soit un chiffrement Hybride
 
