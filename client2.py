@@ -37,7 +37,7 @@ def chat(aes_k):
         send_message(ciphertext[0])
         send_message(ciphertext[1])
         send_message(ciphertext[2])
-#fonction de combinaison de nos triplet pour en former que 1
+#fonction de combinaison de nos triplet pour en former que 1 tableaux
 def combine(array):
     newcc = array[0],array[1],array[2]
     return newcc
@@ -52,11 +52,13 @@ def create_socket():
     print("Server binded at Port ",server.getsockname()[1])
     server.listen(1)
     print("Server is listening")
-    #pn convertie notre clé en string puis en bytes pour l'envoyer a notre client
+    #on convertie notre clé en string puis en bytes pour l'envoyer a notre client
     send_message(str(private).encode('ascii'))
     print("Private Key was sended")
+    #on convertie notre clé aes en hexa pour pouvoir la crypter
     tmp = aes_k.hex()
     enc = dh_enc(tmp,private,p)
+    #on converite la clé crypter en byte pour pouvoir l'envoyer
     send_message(str(enc).encode('ascii'))
     print("Aes Key was sended")
 
@@ -67,6 +69,7 @@ def create_socket():
     while True:
         client,addr = server.accept()
         a = client.recv(2048)
+        # on rajoute nos tripler a un tableaux pour pouvoir le reformer et le decrypter
         array.append(a)
         if(len(array) == 3):
             dec = decrypt_aes(combine(array),aes_k,AES.MODE_GCM)
@@ -84,11 +87,7 @@ def send_message(message):
     server.close()
 
 def main():
-
     server = threading.Thread(target = create_socket,args=())
     server.start()
-
-    time.sleep(5)
-
 
 main()
