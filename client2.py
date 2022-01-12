@@ -7,11 +7,10 @@ import time
 
 # on genere nos clé publique et priver notre variable secrete et nos prime number
 p , g = gen_dh_key(2048)
-
 secret = gen_secret(p)
 
 public = gen_dh_pubK(g,secret,p)
-private = gen_dh_pK(public,secret,p)
+
 #fonction de cryptage aes
 def encrypt_aes(plaintext,key, mode):
   encobj = AES.new(key, AES.MODE_GCM)
@@ -37,7 +36,7 @@ def chat(aes_k):
         send_message(ciphertext[0])
         send_message(ciphertext[1])
         send_message(ciphertext[2])
-#fonction de combinaison de nos triplet pour en former que 1 tableaux
+#fonction de combinaison de nos triplet pour en former que 1
 def combine(array):
     newcc = array[0],array[1],array[2]
     return newcc
@@ -52,13 +51,17 @@ def create_socket():
     print("Server binded at Port ",server.getsockname()[1])
     server.listen(1)
     print("Server is listening")
-    #on convertie notre clé en string puis en bytes pour l'envoyer a notre client
-    send_message(str(private).encode('ascii'))
-    print("Private Key was sended")
-    #on convertie notre clé aes en hexa pour pouvoir la crypter
+    #on envoi les premier p et g ainsi que notre clé public
+    send_message(str(p).encode('ascii'))
+    send_message(str(g).encode('ascii'))
+    send_message(str(public).encode('ascii'))
+    client,addr = server.accept()
+    #on recupere la clé publique de l'autre utilisateur
+    public_user1 = int(client.recv(2048).decode("ascii"))
+    private = gen_dh_pK(public_user1,secret,p)
+
     tmp = aes_k.hex()
     enc = dh_enc(tmp,private,p)
-    #on converite la clé crypter en byte pour pouvoir l'envoyer
     send_message(str(enc).encode('ascii'))
     print("Aes Key was sended")
 
@@ -69,7 +72,6 @@ def create_socket():
     while True:
         client,addr = server.accept()
         a = client.recv(2048)
-        # on rajoute nos tripler a un tableaux pour pouvoir le reformer et le decrypter
         array.append(a)
         if(len(array) == 3):
             dec = decrypt_aes(combine(array),aes_k,AES.MODE_GCM)
@@ -87,7 +89,11 @@ def send_message(message):
     server.close()
 
 def main():
+
     server = threading.Thread(target = create_socket,args=())
     server.start()
+
+    time.sleep(5)
+
 
 main()
