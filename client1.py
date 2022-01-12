@@ -4,7 +4,6 @@ import threading
 import socket
 import time
 #on genere nos nombre premier
-p , g = gen_dh_key(2048)
 can_chat = False
 
 #fonction de crypate de message avec aes
@@ -53,10 +52,23 @@ def create_socket():
     print("Server binded at Port ",server.getsockname()[1])
     server.listen(1)
     print("Server is listening")
+
     #on accept la connection du client
     client,addr = server.accept()
+
     #on recupere la clé priver
-    private = int(client.recv(2048).decode("ascii"))
+    p = int(client.recv(2048).decode("ascii"))
+    client,addr = server.accept()
+    g = int(client.recv(2048).decode("ascii"))
+    client,addr = server.accept()
+    public_user2 = int(client.recv(2048).decode("ascii"))
+    #apres avoir recupere les chiffre premier plus haut on genere notre chiffre secret 
+    #et nos clé publique et priver
+    secret = gen_secret(p)
+    public = gen_dh_pubK(g,secret,p)
+    private = gen_dh_pK(public_user2,secret,p)
+    #on envoi notre clé publique a l'autre utilisateur
+    send_message(str(public).encode('ascii'))
     print("Private Key received ")
     client,addr = server.accept()
     #on recupere la cles aes chiffrer
